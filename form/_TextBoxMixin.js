@@ -229,7 +229,7 @@ define([
 
 			//Bidi Support
 			// isCtrlKeyDown: Boolean
-			//	Used to handle Ctrl + Shift shortcut used to change the page orientation
+			//	Used to handle Ctrl + Shift shortcut used to change the widget orientation
 			var isCtrlKeyDown = false;
 			
 			// normalize input events to reduce spurious event processing
@@ -441,81 +441,4 @@ define([
 			// Since mouse-up will clear the selection, need to defer selection until after mouse-up.
 			// Don't do anything on focus by tabbing into the widget since there's no associated mouse-up event.
 			if(this.selectOnClick && by == "mouse"){
-				// Use on.once() to only select all text on first click only; otherwise users would have no way to clear
-				// the selection.
-				this._selectOnClickHandle = on.once(this.domNode, "mouseup, touchend", lang.hitch(this, function(evt){
-					// Check if the user selected some text manually (mouse-down, mouse-move, mouse-up)
-					// and if not, then select all the text
-					if(!this._isTextSelected()){
-						_TextBoxMixin.selectInputText(this.textbox);
-					}
-				}));
-				this.own(this._selectOnClickHandle);
-
-				// in case the mouseup never comes
-				this.defer(function(){
-					if(this._selectOnClickHandle){
-						this._selectOnClickHandle.remove();
-						this._selectOnClickHandle = null;
-					}
-				}, 500); // if mouseup not received soon, then treat it as some gesture
-			}
-			// call this.inherited() before refreshState(), since this.inherited() will possibly scroll the viewport
-			// (to scroll the TextBox into view), which will affect how _refreshState() positions the tooltip
-			this.inherited(arguments);
-
-			this._refreshState();
-		},
-
-		reset: function(){
-			// Overrides `dijit/_FormWidget/reset()`.
-			// Additionally resets the displayed textbox value to ''
-			this.textbox.value = '';
-			this.inherited(arguments);
-		}
-	});
-
-	if(has("dojo-bidi")){
-		_TextBoxMixin = declare("dijit.form._TextBoxMixin", _TextBoxMixin, {
-			_setValueAttr: function(){
-				this.inherited(arguments);
-				this.applyTextDir(this.focusNode);
-			},
-			_setDisplayedValueAttr: function(){
-				this.inherited(arguments);
-				this.applyTextDir(this.focusNode);
-			},
-			_onInput: function(){
-				this.applyTextDir(this.focusNode);
-				this.inherited(arguments);
-			}
-		});
-	}
-
-	_TextBoxMixin._setSelectionRange = dijit._setSelectionRange = function(/*DomNode*/ element, /*Number?*/ start, /*Number?*/ stop){
-		if(element.setSelectionRange){
-			element.setSelectionRange(start, stop);
-		}
-	};
-
-	_TextBoxMixin.selectInputText = dijit.selectInputText = function(/*DomNode*/ element, /*Number?*/ start, /*Number?*/ stop){
-		// summary:
-		//		Select text in the input element argument, from start (default 0), to stop (default end).
-
-		// TODO: use functions in _editor/selection.js?
-		element = dom.byId(element);
-		if(isNaN(start)){
-			start = 0;
-		}
-		if(isNaN(stop)){
-			stop = element.value ? element.value.length : 0;
-		}
-		try{
-			element.focus();
-			_TextBoxMixin._setSelectionRange(element, start, stop);
-		}catch(e){ /* squelch random errors (esp. on IE) from unexpected focus changes or DOM nodes being hidden */
-		}
-	};
-
-	return _TextBoxMixin;
-});
+				// Use on.once() to only select all text on first click only; otherwise users would have no w
